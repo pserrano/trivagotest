@@ -10,12 +10,21 @@ services:
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock #So that Traefik can listen to the Docker events
   web:
-    image: 127.0.0.1:8000/trivagodemo
-    build: .
+    image: 127.0.0.1:5000/trivagodemo
+    build: app/.
     labels:
       - "traefik.docker.network: traefik"
       - "traefik.port=8000"
-  redis:
-    image: redis:alpine
+    links: 
+    - mysql:mysql
+  mysql:
+    image: 127.0.0.1:5000/trivagomysql
+    build: mysql/.
+    ports:
+      - "32000:3306"
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+    volumes:
+      - ./db:/docker-entrypoint-initdb.d/:ro
     labels: 
       - "traefik.enable=false"

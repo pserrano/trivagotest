@@ -1,0 +1,2 @@
+INSERT INTO customers (first_name, last_name, city, email) VALUES ('Mario', 'Fernandez', 'Madrid', 'mfernandez@unmail.com');
+INSERT INTO customers (first_name, last_name, city, email) VALUES ('Pep', 'Fuentes', 'Barcelona', 'pepfuentes@esemail.com');

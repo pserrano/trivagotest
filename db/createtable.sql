@@ -1,0 +1,1 @@
+CREATE TABLE customers (first_name varchar(25), last_name  varchar(25), city varchar(50), email  varchar(50));

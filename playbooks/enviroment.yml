@@ -32,7 +32,7 @@
     image: 127.0.0.1:8000/trivagodemo
     build: . 
     links:
-      - redis:redis
+      - mysql:mysql:5.7
     labels:
       - "traefik.docker.network: traefik"
       - "traefik.port=8000"
