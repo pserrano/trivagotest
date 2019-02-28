@@ -5,20 +5,13 @@
 
 # How to running the enviroment
 
-
-
-You need docker install in your computer and a bandwich connection
-
-Enter in the main directory and execute: 
+You need to install docker and execute in the main directory 
 
 make init
 
-For watching state of connections, enter in this website: 
-
-
 For check the website: 
 
-
+make test-web 
 
 
 
@@ -29,16 +22,18 @@ For check the website:
 
 - Building register for upload all changes and all deploys. 
 
-- I found problems with networks layers on Swarm 
+- I found problems with networks layers on Swarm and traefik.
 
+- This is basic schema about tiny infraestructure. 
 
+![Swarm](basic_swarm.jpg)
 
 
 ### Final Questions 
 
 − How would you update a concrete artifact inside the web server layer?
 
-Only made changes in the docker web image and you could get push to the register and update the cluster. 
+Only made changes in the docker web image and i could get push to the register and update the cluster.
 
 − How would you assure HA for the whole application?
 
@@ -46,5 +41,4 @@ I would use to place each replica on a different node in the docker swarm, minim
 
 − How would you improve your solution? Mention next steps to be considered.
 
-- I would like to have more time to do better solution for network layer (encript layer, https, etc)
-- I would like 
+I would like to have more time to do better solution for network layer (encript layer, https, etc)

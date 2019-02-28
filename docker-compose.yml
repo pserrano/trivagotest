@@ -26,25 +26,9 @@ services:
       replicas: 2
     labels:
       - "traefik.enable=true"
-      - "traefik.port=8000"
+      - "traefik.port=80"
       - "traefik.docker.network=trivagodemo_traefik-net"
       - "traefik.frontend.rule=Host:web.trivago.kb"
-
-  portainer:
-    image: portainer/portainer
-    volumes:
-      - "/var/run/docker.sock:/var/run/docker.sock&quot"
-      - "portainerdata:/data"
-    networks:
-      - traefik-net
-    deploy:
-      placement:
-        constraints: [node.role == manager]
-      labels:
-        - "traefik.enable=true"
-        - "traefik.port=9000"
-        - "traefik.docker.network=trivagodemo_traefik-net"
-        - "traefik.frontend.rule=Host:portainer.tivagodemo.kb"
 
   mysql:
     image: 127.0.0.1:5000/trivagomysql
@@ -59,6 +43,3 @@ services:
   
 networks:
   traefik-net:
-
-volumes:
-  portainerdata:

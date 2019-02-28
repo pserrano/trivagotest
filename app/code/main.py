@@ -19,4 +19,4 @@ def hello():
     return 'Hey! This is : {} , This a website for customer {}\n'.format(socket.gethostbyname(socket.gethostname()), data)
 
 if __name__ == "__main__":
-    app.run(host="0.0.0.0", port=8000, debug=True)
+    app.run(host="0.0.0.0", debug=True, port=80)
