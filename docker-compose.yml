@@ -1,4 +1,4 @@
-version: '3'
+version: '3.3'
 
 networks:
   traefik:
@@ -33,14 +33,16 @@ services:
     labels:
       - "traefik.docker.network: traefik"
       - "traefik.port=8000"
-      - traefik.enable=true
+      -  "traefik.enable=true"
     networks:
       - traefik
   mysql:
     image: 127.0.0.1:5000/trivagomysql
-    build: mysql/.
     ports:
-      - "32000:3306"
+    - target: 3306
+      protocol: tcp
+      published: 32000
+      mode: ingress
     environment:
       MYSQL_ROOT_PASSWORD: root
     volumes:
