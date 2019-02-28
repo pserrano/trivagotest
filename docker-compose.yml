@@ -9,14 +9,16 @@ services:
       - "8080:8080" # The Web UI (enabled by --api)
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock #So that Traefik can listen to the Docker events
+    networks:
+      - app-trivago
   web:
     image: 127.0.0.1:5000/trivagodemo
     build: app/.
     labels:
       - "traefik.docker.network: traefik"
       - "traefik.port=8000"
-    links: 
-    - mysql:mysql
+    networks:
+      - app-trivago
   mysql:
     image: 127.0.0.1:5000/trivagomysql
     build: mysql/.
@@ -28,3 +30,9 @@ services:
       - ./db:/docker-entrypoint-initdb.d/:ro
     labels: 
       - "traefik.enable=false"
+    networks:
+      - app-trivago
+networks:
+  app-trivago:
+    driver: bridge
+    

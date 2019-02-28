@@ -6,11 +6,13 @@ IMGSQL    := ${NAMESQL}:${TAG}
 LATESTWEB := ${NAMEWEB}:latest
 LATESTSQL := ${NAMESQL}:latest
 
-.PHONY : setup build-web build-mysql push-web push-mysql swarm
+init: setup build-web build-mysql push-web push-mysql swarm
+
+.PHONY : init
 
 setup:
-	@docker service create --name registry --publish published=5000,target=5000 registry:2
 	@docker swarm init
+	@docker service create --name registry --publish published=5000,target=5000 registry:2
 
 test:
 	@docker-compose up -d
@@ -43,3 +45,4 @@ test-web:
 destroy-all:
 	@docker stack rm trivagodemo
 	@docker service rm registry
+	@docker swarm leave --force
