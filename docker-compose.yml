@@ -1,24 +1,41 @@
 version: '3'
 
+networks:
+  traefik:
+    external: true
+
 services:
   reverse-proxy:
     image: traefik # The official Traefik docker image
+    deploy:
+      replicas: 2
+      placement:
+        constraints:
+        - node.role == manager
     command: --api --docker # Enables the web UI and tells Traefik to listen to docker
     ports:
-      - "80:80"     # The HTTP port
-      - "8080:8080" # The Web UI (enabled by --api)
+    - target: 80
+      protocol: tcp
+      published: 80
+      mode: ingress
+    - target: 8080
+      protocol: tcp
+      published: 8080
+      mode: ingress
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock #So that Traefik can listen to the Docker events
     networks:
-      - app-trivago
+      - traefik
   web:
     image: 127.0.0.1:5000/trivagodemo
-    build: app/.
+    deploy:
+      replicas: 2 
     labels:
       - "traefik.docker.network: traefik"
       - "traefik.port=8000"
+      - traefik.enable=true
     networks:
-      - app-trivago
+      - traefik
   mysql:
     image: 127.0.0.1:5000/trivagomysql
     build: mysql/.
@@ -31,8 +48,4 @@ services:
     labels: 
       - "traefik.enable=false"
     networks:
-      - app-trivago
-networks:
-  app-trivago:
-    driver: bridge
-    
+      - traefik

@@ -13,6 +13,7 @@ init: setup build-web build-mysql push-web push-mysql swarm
 setup:
 	@docker swarm init
 	@docker service create --name registry --publish published=5000,target=5000 registry:2
+	@docker network create -d overlay traefik
 
 test:
 	@docker-compose up -d
