@@ -13,7 +13,6 @@ init: setup build-web build-mysql push-web push-mysql swarm
 setup:
 	@docker swarm init
 	@docker service create --name registry --publish published=5000,target=5000 registry:2
-	@docker network create -d overlay traefik
 
 test:
 	@docker-compose up -d
@@ -41,7 +40,7 @@ deploy-app:
 	@docker service update --image ${NAMEWEB} web
 
 test-web:
-	@curl -H Host:web.trivago http://127.0.0.1
+	@curl -H Host:web.trivago.kb http://127.0.0.1
 
 destroy-all:
 	@docker stack rm trivagodemo

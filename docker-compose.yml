@@ -1,53 +1,64 @@
 version: '3.3'
-
-networks:
-  traefik:
-    external: true
-
 services:
-  reverse-proxy:
-    image: traefik # The official Traefik docker image
-    deploy:
-      replicas: 2
-      placement:
-        constraints:
-        - node.role == manager
-    command: --api --docker # Enables the web UI and tells Traefik to listen to docker
+  traefik:
+    image: traefik 
+    command: --web --docker --docker.swarmmode --docker.domain=trivago.kb --docker.watch  --logLevel=DEBUG 
+    networks: 
+      - traefik-net
     ports:
-    - target: 80
-      protocol: tcp
-      published: 80
-      mode: ingress
-    - target: 8080
-      protocol: tcp
-      published: 8080
-      mode: ingress
+      - "80:80"
+      - "8080:8080"
     volumes:
-      - /var/run/docker.sock:/var/run/docker.sock #So that Traefik can listen to the Docker events
-    networks:
-      - traefik
+      - /var/run/docker.sock:/var/run/docker.sock
+      - /dev/null:/traefik.toml
+    deploy:
+      mode: global
+      placement:
+        constraints: [node.role==manager]
+        
   web:
     image: 127.0.0.1:5000/trivagodemo
+    networks: 
+      - traefik-net
+    depends_on: 
+      - mysql
     deploy:
-      replicas: 2 
+      replicas: 2
     labels:
-      - "traefik.docker.network: traefik"
+      - "traefik.enable=true"
       - "traefik.port=8000"
-      -  "traefik.enable=true"
+      - "traefik.docker.network=trivagodemo_traefik-net"
+      - "traefik.frontend.rule=Host:web.trivago.kb"
+
+  portainer:
+    image: portainer/portainer
+    volumes:
+      - "/var/run/docker.sock:/var/run/docker.sock&quot"
+      - "portainerdata:/data"
     networks:
-      - traefik
+      - traefik-net
+    deploy:
+      placement:
+        constraints: [node.role == manager]
+      labels:
+        - "traefik.enable=true"
+        - "traefik.port=9000"
+        - "traefik.docker.network=trivagodemo_traefik-net"
+        - "traefik.frontend.rule=Host:portainer.tivagodemo.kb"
+
   mysql:
     image: 127.0.0.1:5000/trivagomysql
-    ports:
-    - target: 3306
-      protocol: tcp
-      published: 32000
-      mode: ingress
     environment:
       MYSQL_ROOT_PASSWORD: root
     volumes:
       - ./db:/docker-entrypoint-initdb.d/:ro
+    networks: 
+      - traefik-net
     labels: 
       - "traefik.enable=false"
-    networks:
-      - traefik
+  
+networks:
+  traefik-net:
+
+volumes:
+  portainerdata:
